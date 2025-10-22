@@ -18,7 +18,8 @@ Nova is a split-screen watch companion that uses local vision AI (Ollama + LLaVA
 
 ## 🎬 Screenshot
 
-![Nova in Action](https://user-images.githubusercontent.com/https://github.com/user-attachments/assets/7c64914f-5e45-46cd-8870-353a77d41773)
+![Nova in Action](<img width="3840" height="2160" alt="Screenshot 2025-10-22 192442" src="https://github.com/user-attachments/assets/1af823f0-530f-46b2-9e8a-d754362a3b33" />)
+
 
 *Nova watching and commenting on a video in real-time*
 

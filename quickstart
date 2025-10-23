@@ -1,0 +1,101 @@
+# 🚀 Quick Start Guide
+
+Get Nova up and running in 5 minutes!
+
+## Step 1: Install Ollama
+
+Download and install Ollama from [ollama.ai](https://ollama.ai)
+
+## Step 2: Run Setup
+
+### On macOS/Linux:
+```bash
+./setup.sh
+```
+
+### On Windows:
+```bash
+setup.bat
+```
+
+### Manual Setup:
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Download the AI model
+ollama pull llava:7b
+```
+
+## Step 3: Launch Nova
+
+```bash
+python watchparty_voice_final.py
+```
+
+## Step 4: Choose Your Mode
+
+- **📝 Text Mode** - Type to chat
+- **🎤 Voice Mode** - Talk with your voice (recommended!)
+
+## Step 5: Start Watching!
+
+1. Open a video (YouTube, TikTok, anything!)
+2. Nova will automatically start commenting
+3. Press SPACE or click TALK to respond
+
+## 🎤 Voice Mode Tips
+
+- **Select a voice** - Aria (default) is casual and friendly
+- **Press SPACE** - Quick way to talk to Nova
+- **Be patient** - Voice mode takes 5-10 seconds (normal!)
+- **Watch the status** - Shows what Nova is doing
+
+## 🐛 Common Issues
+
+**"Ollama not found"**
+→ Install Ollama from ollama.ai
+
+**"Voice not working"**
+```bash
+pip install edge-tts pygame SpeechRecognition pyaudio
+```
+
+**"Can't install pyaudio"**
+- macOS: `brew install portaudio && pip install pyaudio`
+- Linux: `sudo apt-get install portaudio19-dev python3-pyaudio`
+- Windows: Download from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
+
+**"Nova sounds robotic"**
+→ This is normal! The personality is there, it's just TTS voice synthesis
+
+**"TALK button cut off"**
+→ Close and restart the app
+
+## 🎮 Basic Controls
+
+### Text Mode:
+- Type in the box and press Enter
+- Nova responds in the chat window
+
+### Voice Mode:
+- **SPACE** or **TALK button** - Start talking
+- Watch the status for feedback
+- Nova speaks her responses
+
+## ⚙️ Quick Tweaks
+
+Want Nova to comment more/less often? Edit `watchparty_voice_final.py`:
+
+```python
+# Line ~521
+self.comment_cooldown = 45  # Change this number (seconds)
+```
+
+## 📚 Full Documentation
+
+See [README.md](README.md) for complete documentation!
+
+---
+
+**That's it! Enjoy watching with Nova!** 🐿️✨

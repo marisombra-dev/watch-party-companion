@@ -1,186 +1,241 @@
-﻿# 🎬 Watch Party Companion - Nova
+# 🎬 Watch Party with Nova
 
-**Your AI friend who watches videos with you and actually has personality!**
-
-Nova is a split-screen watch companion that uses local vision AI (Ollama + LLaVA) to watch TikToks, YouTube videos, or any content with you - and she's got *opinions*.
-
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+An AI companion that watches videos with you and provides real-time commentary! Nova uses vision AI to see what's on your screen and react naturally like a friend watching alongside you.
 
 ## ✨ Features
 
-- 🎮 **Real-time vision AI** - Nova actually sees what you're watching using LLaVA 7B
-- 💬 **Natural personality** - Casual slang, emojis, sarcasm, and honest reactions
-- 👀 **Split-screen design** - Watch on the left, chat with Nova on the right
-- 🔥 **Auto-commentary** - Nova comments every 30 seconds on what's happening
-- 💯 **Interactive chat** - Ask Nova questions about what's on screen
-- 🎯 **Stays in character** - No "I'm an AI" breaking immersion
+### Two Modes:
 
-## 🎬 Screenshot
+**📝 Text Mode**
+- Split-screen interface with live commentary
+- Type to chat with Nova about what you're watching
+- Text-based interaction
 
-![Nova in Action](Screenshot%202025-10-22%20192442.png)
+**🎤 Voice Mode** ⭐ NEW!
+- Nova speaks her commentary out loud
+- High-quality text-to-speech with 5 voice options
+- Voice input - talk to Nova using your microphone
+- Compact floating window that stays on top
 
+### Nova's Personality
+- Playful and slightly sarcastic
+- Uses modern slang naturally (lmao, ngl, fr, etc.)
+- Adds emojis when they fit the vibe
+- Reacts in real-time to what's happening on screen
+- Remembers context during your watch session
 
-*Nova watching and commenting on several videos in real-time*
-
-## 🚀 Quick Start
-
-# 🎬 Watch Party Companion - Nova
-
-**Your AI friend who watches videos with you and actually has personality!**
-
-Nova is a split-screen watch companion that uses local vision AI (Ollama + LLaVA) to watch TikToks, YouTube videos, or any content with you - and she's got *opinions*.
-
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-
-## ✨ Features
-
-- 🎮 **Real-time vision AI** - Nova actually sees what you're watching using LLaVA 7B
-- 💬 **Natural personality** - Casual slang, emojis, sarcasm, and honest reactions
-- 👀 **Split-screen design** - Watch on the left, chat with Nova on the right
-- 🔥 **Auto-commentary** - Nova comments every 30 seconds on what's happening
-- 💯 **Interactive chat** - Ask Nova questions about what's on screen
-- 🎯 **Stays in character** - No "I'm an AI" breaking immersion
-
-## 🎭 Nova's Personality
-
-Nova talks like a real friend:
-- Uses varied slang: "ngl", "lowkey", "highkey", "deadass", "fr", "bussin", "no cap"
-- Adds emojis naturally: 🔥 💀 😭 👀 ✨ 😏
-- Has opinions and isn't afraid to share them
-- Appreciates attractive people on screen
-- Can be playfully sarcastic
-- Keeps responses short and punchy (1-2 sentences)
-
-## 📋 Prerequisites
-
-- Python 3.8+
-- [Ollama](https://ollama.ai/) installed and running
-- LLaVA model downloaded
+### Smart Commentary
+- Auto-comments every 45 seconds (configurable)
+- Waits 15 seconds after you speak before commenting
+- Won't interrupt while speaking
+- Anti-hallucination prompts for accurate observations
+- Vision AI powered by LLaVA
 
 ## 🚀 Quick Start
 
-### 1. Install Ollama
-
-Download and install from [ollama.ai](https://ollama.ai/)
-
-### 2. Pull the LLaVA model
+### Prerequisites
 
 ```bash
+# Core requirements
+pip install ollama pyautogui pillow
+
+# For voice mode
+pip install edge-tts pygame
+pip install SpeechRecognition pyaudio
+
+# Make sure Ollama is installed and running
 ollama pull llava:7b
 ```
 
-### 3. Install Python dependencies
+### Installation
 
+1. Clone this repository:
 ```bash
-pip install pyautogui ollama pillow tkinter --break-system-packages
+git clone https://github.com/yourusername/watch-party-nova.git
+cd watch-party-nova
 ```
 
-(Note: `--break-system-packages` is needed for some Python environments)
-
-### 4. Run the companion
-
+2. Install dependencies:
 ```bash
-python watchparty_v2_3.py
+pip install -r requirements.txt
 ```
 
-### 5. Start watching!
+3. Run Nova:
+```bash
+python watchparty_voice_final.py
+```
 
-- Open a video on the **left half** of your screen (TikTok, YouTube, etc.)
-- Nova's window will appear on the **right half**
-- Nova will automatically comment every 30 seconds
-- Chat with Nova anytime by typing in the input box!
+## 🎮 How to Use
 
-## 💡 Usage Tips
+### Getting Started
+1. **Launch the app** - Choose Text Mode or Voice Mode
+2. **In Voice Mode**: Select Nova's voice (Aria is default - casual & friendly)
+3. **Open a video** anywhere on your screen (YouTube, streaming sites, local videos)
+4. **Let Nova watch** - She'll automatically comment every 45 seconds
+5. **Interact anytime**:
+   - Text Mode: Type in the input box
+   - Voice Mode: Press SPACE or click "TALK" button
 
-- **For best results**: Make the video fullscreen on the left half of your screen
-- **Nova's cooldown**: She comments every 30 seconds when you're not actively chatting
-- **Keep it interactive**: Nova responds better when you engage with her
-- **Screenshots saved**: All captured frames are saved in `watch_party_screenshots/` folder
+### Voice Mode Controls
+- **SPACE** - Push-to-talk (hold while speaking)
+- **TALK Button** - Click to activate voice input
+- Status shows what Nova is doing:
+  - 🎤 Listening... (capturing your voice)
+  - 🤔 Nova is thinking... (generating response)
+  - 🎤 Generating voice... (creating audio)
+  - Speaking (shows what she's saying)
 
-## 🎨 Example Interactions
+### Available Voices
+Choose from 5 high-quality female voices:
+- **Aria** - Casual & Friendly (default) ✨
+- **Jenny** - Warm & Conversational
+- **Sara** - Professional but friendly
+- **Michelle** - Expressive
+- **Ashley** - Young & Fun
 
-**You:** "what do you think of this?"  
-**Nova:** "Ngl that cinematography is fire 🔥 Lowkey jealous of that lighting"
+## ⚙️ Configuration
 
-**You:** "is this cringe?"  
-**Nova:** "Lmao yeah a little bit but I'm here for it anyway 😭"
+You can customize Nova's behavior by editing the code:
 
-**You:** "who looks better?"  
-**Nova:** "Deadass they both look good but left side is giving main character energy ✨"
+```python
+# Adjust comment frequency (in seconds)
+self.comment_cooldown = 45  # Time between auto-comments
 
-## 🏗️ Project Evolution
+# Change how long Nova waits after you speak
+time_since_activity >= 15  # Seconds to wait after user input
 
-This project went through several iterations to find the perfect balance:
+# Modify personality in prompts
+# Look for the prompt strings in get_response() and get_auto_comment()
+```
 
-- **v1.x** - Initial attempts, struggled with vision model responses
-- **v2.0** - Fixed vision processing with simple, direct prompts
-- **v2.1** - Added basic personality (casual friend vibes)
-- **v2.2** - More slang and opinions
-- **v2.3** - Full personality with emojis, sarcasm, and flirty energy ✨ *(current)*
+## 🛠️ Technical Details
 
-**Key insight**: Vision models work best with simple, direct prompts. Complex system messages or conversation history can confuse them and trigger generic "I'm an AI" responses.
+### How It Works
+1. **Screen Capture**: Takes screenshots of the left half of your screen
+2. **Vision Analysis**: Sends screenshots to LLaVA (vision language model)
+3. **Response Generation**: Creates natural, personality-rich commentary
+4. **Voice Synthesis**: Uses Microsoft Edge TTS for high-quality speech
+5. **Voice Recognition**: Google Speech Recognition for voice input
 
-## 🔧 Technical Details
+### Models Used
+- **LLaVA 7B** - Vision language model for understanding video content
+- **Edge TTS** - Neural text-to-speech (en-US-AriaNeural and others)
+- **Google Speech Recognition** - Voice input processing
 
-**Architecture:**
-- `pyautogui` for screen capture (left half of screen)
-- `ollama` Python library for LLaVA model inference
-- `tkinter` for the GUI
-- Threading for non-blocking auto-commentary
+### Performance
+- **Text Mode**: ~2-3 seconds response time
+- **Voice Mode**: ~5-10 seconds (includes TTS generation + audio playback)
+- **Screenshot**: Captures left half of screen only
+- **Memory**: ~2GB RAM (LLaVA model)
 
-**Model:**
-- LLaVA 7B (via Ollama)
-- Processes images + text prompts
-- Runs locally on your machine
+## 📋 System Requirements
 
-**Performance:**
-- Response time: ~2-5 seconds depending on hardware
-- Screenshot capture: ~0.5 seconds
-- Memory usage: ~4-6GB RAM (model dependent)
-
-## 🎯 Future Ideas
-
-- [ ] Support for other vision models (GPT-4V, Claude with API)
-- [ ] Customizable personality presets
-- [ ] Multi-language support
-- [ ] Voice output (TTS)
-- [ ] Save conversation history
-- [ ] Adjustable auto-comment frequency
-- [ ] Support for multiple monitors
+- **OS**: Windows, macOS, or Linux
+- **Python**: 3.8 or higher
+- **RAM**: 4GB minimum, 8GB recommended
+- **GPU**: Optional (speeds up LLaVA inference)
+- **Microphone**: Required for voice input
+- **Internet**: Required for voice recognition
 
 ## 🐛 Troubleshooting
 
-**"Vision model not working" / "I'm an AI language model" responses:**
-- Make sure LLaVA is properly installed: `ollama pull llava:7b`
-- Try running the test script: `python test_vision.py`
-- Restart Ollama service
+### "Voice not available"
+```bash
+pip install edge-tts pygame
+```
 
-**Nova's window not staying on top:**
-- This is a known issue on some window managers
-- Try manually keeping the window on top
+### "Voice input not available"
+```bash
+pip install SpeechRecognition pyaudio
 
-**Poor image quality:**
-- Ensure video is playing on left half of screen
-- Try making the video larger/fullscreen on left side
-- Check screenshot samples in `watch_party_screenshots/` folder
+# On Linux, you may also need:
+sudo apt-get install portaudio19-dev python3-pyaudio
 
-## 📝 License
+# On macOS:
+brew install portaudio
+```
 
-MIT License - feel free to modify and use as you like!
+### "Ollama not found"
+Make sure Ollama is installed and running:
+```bash
+# Install from https://ollama.ai
+ollama serve
 
-## 🙏 Acknowledgments
+# In another terminal:
+ollama pull llava:7b
+```
 
-- Built with [Ollama](https://ollama.ai/)
-- Uses [LLaVA](https://llava-vl.github.io/) vision model
-- Inspired by the desire to never watch videos alone again 😄
+### "Nova's responses are too robotic"
+The personality prompts are in the `get_response()` and `get_auto_comment()` functions. You can adjust them to make Nova more or less expressive.
+
+### "Window too small / TALK button cut off"
+The window should be 320x420 pixels. If it's still too small:
+1. Close the app completely
+2. Restart it
+3. The new size should apply
+
+### "Nova speaks too often / not enough"
+Adjust `self.comment_cooldown` (around line 521):
+```python
+self.comment_cooldown = 45  # Increase = less frequent, decrease = more frequent
+```
+
+## 🎨 Customization Ideas
+
+### Change Nova's Personality
+Edit the prompts in `get_response()` and `get_auto_comment()` to adjust:
+- Sarcasm level
+- Slang usage
+- Emoji frequency
+- Commentary style
+
+### Add More Voices
+Edge TTS supports many voices. Add them to `self.available_voices`:
+```python
+"New Voice Name": "en-US-VoiceCodeNeural",
+```
+
+### Adjust Window Position
+Edit the geometry line in `setup_voice_mode()`:
+```python
+self.root.geometry(f"320x420+{x_position}+{y_position}")
+```
+
+### Change Screenshot Region
+Modify `capture_left_screen()` to capture different areas:
+```python
+# Currently captures left half:
+screenshot = pyautogui.screenshot(region=(0, 0, screen_width//2, screen_height))
+
+# Capture right half instead:
+screenshot = pyautogui.screenshot(region=(screen_width//2, 0, screen_width//2, screen_height))
+```
 
 ## 🤝 Contributing
 
-Found a bug? Have an idea? PRs and issues welcome!
+Contributions are welcome! Some ideas:
+- Add more personality options
+- Support for other vision models
+- Multi-language support
+- Video file analysis mode
+- Custom voice training
+- Persistent memory across sessions
+- Export commentary to text file
 
----
+## 📝 License
+
+MIT License - feel free to use and modify!
+
+## 🙏 Acknowledgments
+
+- [Ollama](https://ollama.ai) - For easy local LLM deployment
+- [LLaVA](https://llava-vl.github.io/) - Vision language model
+- [Edge TTS](https://github.com/rany2/edge-tts) - High-quality text-to-speech
+- [PyAutoGUI](https://pyautogui.readthedocs.io/) - Screen capture
+
+## 📧 Support
+
+Having issues? Open an issue on GitHub or check the troubleshooting section above!
 
 **Made with 🔥 by someone who wanted an AI friend to watch TikToks with**
 
@@ -191,3 +246,7 @@ Found a bug? Have an idea? PRs and issues welcome!
 - 🪩 [Itch.io](https://marisombra.itch.io/) (for games)
  
 *Note: Nova is running locally on your machine - no data is sent to external servers!*
+---
+
+**Have fun watching with Nova!** 🐿️🎬✨
+ 

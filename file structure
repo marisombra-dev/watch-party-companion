@@ -1,0 +1,119 @@
+# 📁 Repository Structure
+
+```
+watch-party-nova/
+├── watchparty_voice_final.py   # Main application (USE THIS!)
+├── README.md                    # Full documentation
+├── QUICKSTART.md               # Quick start guide
+├── requirements.txt            # Python dependencies
+├── setup.sh                    # Setup script (macOS/Linux)
+├── setup.bat                   # Setup script (Windows)
+├── LICENSE                     # MIT License
+└── watch_party_screenshots/    # Auto-generated (screenshots saved here)
+```
+
+## 📝 File Descriptions
+
+### Main Files
+
+**watchparty_voice_final.py**
+- The complete application with both text and voice modes
+- This is the file you run!
+- Contains all features and improvements
+
+### Documentation
+
+**README.md**
+- Complete documentation
+- Feature descriptions
+- Troubleshooting guide
+- Customization options
+
+**QUICKSTART.md**
+- Get started in 5 minutes
+- Essential setup steps
+- Common issues
+
+### Setup Files
+
+**requirements.txt**
+- All Python dependencies
+- Use with `pip install -r requirements.txt`
+
+**setup.sh** (macOS/Linux)
+- Automated setup script
+- Checks dependencies
+- Downloads AI model
+- Run with `./setup.sh`
+
+**setup.bat** (Windows)
+- Windows version of setup script
+- Same functionality as setup.sh
+- Run by double-clicking
+
+## 🚀 Getting Started
+
+**Option 1: Automated (Recommended)**
+```bash
+# macOS/Linux
+./setup.sh
+
+# Windows
+setup.bat
+```
+
+**Option 2: Manual**
+```bash
+pip install -r requirements.txt
+ollama pull llava:7b
+python watchparty_voice_final.py
+```
+
+## 📊 Generated Files
+
+These folders/files are created automatically:
+
+- `watch_party_screenshots/` - Screenshots Nova takes while watching
+- `temp_audio_*.mp3` - Temporary audio files (auto-deleted)
+
+## 🗂️ Optional Files
+
+You may want to add:
+
+- `.gitignore` - Ignore screenshots and temp files
+- `LICENSE` - MIT License file
+- `CONTRIBUTING.md` - Contribution guidelines
+- `.github/workflows/` - CI/CD pipelines
+
+## 📦 Recommended .gitignore
+
+```gitignore
+# Screenshots
+watch_party_screenshots/
+
+# Temporary audio files
+temp_audio_*.mp3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+```
+
+---
+
+**Ready to commit to GitHub!** 🚀

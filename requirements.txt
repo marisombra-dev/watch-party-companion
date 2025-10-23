@@ -1,3 +1,13 @@
-﻿pyautogui>=0.9.54
+# Core dependencies
 ollama>=0.1.0
+pyautogui>=0.9.54
 Pillow>=10.0.0
+
+# Voice mode dependencies
+edge-tts>=6.1.9
+pygame>=2.5.0
+SpeechRecognition>=3.10.0
+pyaudio>=0.2.13
+
+# GUI (usually included with Python, but listed for completeness)
+# tkinter is built-in for most Python installations

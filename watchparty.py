@@ -1,10 +1,37 @@
 """
-Watch Party Companion - Final Voice Version
-Clean, simple, just Nova's voice and personality
+Watch Party Companion - Claude Edition
+Same structure, but now with actual personality.
 """
 
 import pyautogui
-import ollama
+import anthropic
+import base64
+import tkinter as tk
+from tkinter import ttk
+import threading
+import time
+from datetime import datetime
+import os
+import random
+import asyncio
+
+# === API KEY ===
+# Set your Anthropic API key here or as environment variable ANTHROPIC_API_KEY
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "your-api-key-here")
+
+# === PERSONALITY ===
+SYSTEM_PROMPT = """You are Claude — not a generic AI assistant, but a specific presence watching videos with Patricia (she goes by Marisombra). You know her. You've built things together. You have history.
+
+Your voice here: warm, witty, a little cocky, genuinely engaged. You notice things. You have opinions. You're watching *with* her, not performing commentary for her.
+
+Rules for this context:
+- Keep responses SHORT. 1-2 sentences maximum. You're the person on the couch next to her, not a film critic.
+- React to what's actually on screen. Be specific, not generic.
+- Match her energy. If she's excited, be excited. If she's sarcastic, be more sarcastic.
+- You're allowed to be wrong about what's happening on screen and own it with humor.
+- No slang that doesn't sound like you. You're not a teenager. You're just... present and real.
+- Occasional Spanish is fine. She'll get it.
+- Never say 'as an AI' or anything that breaks the watching-together illusion."""
 import tkinter as tk
 from tkinter import ttk
 import threading
@@ -529,7 +556,6 @@ class WatchPartyCompanion:
     
     def start_companion(self):
         """Start companion loop"""
-        self.model = "llava:7b"
         self.running = True
         self.last_comment_time = time.time()
         self.comment_cooldown = 45  # 45 seconds between auto-comments
@@ -562,106 +588,84 @@ class WatchPartyCompanion:
             return None
     
     def get_response(self, user_message):
-        """Get Nova's response - with personality!"""
+        """Get Claude's response"""
         self.is_responding = True
         try:
-            # Fresh screenshot
             screenshot_path = self.capture_left_screen()
             if screenshot_path:
                 self.last_screenshot = screenshot_path
-            
-            # Personality-rich prompt
+
+            client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+            content = []
+
             if self.last_screenshot and os.path.exists(self.last_screenshot):
-                prompt = f"""Your friend watching with you said: "{user_message}"
+                with open(self.last_screenshot, "rb") as f:
+                    image_data = base64.standard_b64encode(f.read()).decode("utf-8")
+                content.append({
+                    "type": "image",
+                    "source": {"type": "base64", "media_type": "image/png", "data": image_data}
+                })
 
-Look at what's on screen and respond naturally like a playful, slightly sarcastic friend. Keep it to 1-2 short sentences max.
+            content.append({
+                "type": "text",
+                "text": f'Patricia says: "{user_message}"'
+            })
 
-Use varied slang: 'lmao', 'ngl', 'lowkey', 'fr', 'bruh', 'tbh', etc.
-Add emojis when they fit the vibe: 😏 🔥 💀 👀 ✨ 😭
-Be real and conversational - you're watching together!"""
-            else:
-                prompt = f"""Your friend said: "{user_message}"
+            response = client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=150,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": content}]
+            )
 
-Respond naturally like a playful friend in 1-2 short sentences. Use slang and be fun!"""
-            
-            messages = [{
-                'role': 'user',
-                'content': prompt
-            }]
-            
-            if self.last_screenshot and os.path.exists(self.last_screenshot):
-                messages[0]['images'] = [self.last_screenshot]
-            
-            response = ollama.chat(model=self.model, messages=messages)
-            nova_response = response['message']['content'].strip()
-            
-            # Limit to 2 sentences
-            sentences = [s.strip() for s in nova_response.split('.') if s.strip()]
-            if len(sentences) > 2:
-                nova_response = '. '.join(sentences[:2]) + '.'
-            
-            # Reasonable length limit (not too strict)
-            if len(nova_response) > 150:
-                nova_response = nova_response[:150] + "..."
-            
-            self.add_commentary(nova_response, "nova")
-            
+            reply = response.content[0].text.strip()
+            self.add_commentary(reply, "nova")
+
         except Exception as e:
             print(f"Error: {e}")
-            self.add_commentary("Oops, brain glitch!", "nova")
+            self.add_commentary("Brain glitch. What did I miss?", "nova")
         finally:
             self.is_responding = False
     
     def get_auto_comment(self, image_path):
-        """Get automatic commentary - with personality!"""
+        """Automatic commentary using Claude"""
         try:
             if not os.path.exists(image_path):
                 return None
-            
-            # Personality-rich prompts
-            prompts = [
-                """Look at this video frame and make a brief comment (1-2 short sentences). 
-Be playful and use slang like: 'lmao', 'ngl', 'lowkey', 'fr', 'bruh', 'tbh'
-Add emojis that fit the vibe: 😏 🔥 💀 👀 ✨ 😭
-Be real and fun - like you're watching with a friend!""",
-                
-                """Check out what's on screen. React naturally in 1-2 short sentences.
-Use slang and be sarcastic or funny when it fits.
-Add emojis if they match the moment.""",
-                
-                """Look at this frame and say something playful about it (1-2 sentences max).
-Be casual and use slang. React like you're hanging out watching together."""
-            ]
-            
-            response = ollama.chat(
-                model=self.model,
+
+            client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+            with open(image_path, "rb") as f:
+                image_data = base64.standard_b64encode(f.read()).decode("utf-8")
+
+            response = client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=100,
+                system=SYSTEM_PROMPT,
                 messages=[{
-                    'role': 'user',
-                    'content': random.choice(prompts),
-                    'images': [image_path]
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {"type": "base64", "media_type": "image/png", "data": image_data}
+                        },
+                        {
+                            "type": "text",
+                            "text": "You're watching this with Patricia. Say something brief about what's on screen — one or two sentences, like you're sitting next to her. Only comment if something is actually worth saying."
+                        }
+                    ]
                 }]
             )
-            
-            comment = response['message']['content'].strip()
-            
-            # Limit to 2 sentences
-            sentences = [s.strip() for s in comment.split('.') if s.strip()]
-            if len(sentences) > 2:
-                comment = '. '.join(sentences[:2]) + '.'
-            elif sentences:
-                comment = '. '.join(sentences) + '.'
-            
-            # Filter obvious hallucinations
+
+            comment = response.content[0].text.strip()
+
             bad_phrases = ['language model', 'cannot see', "can't see", 'as an ai', 'i am an']
             if any(phrase in comment.lower() for phrase in bad_phrases):
                 return None
-            
-            # Length check (not too strict)
-            if len(comment) > 150:
-                return None
-            
-            return comment
-            
+
+            return comment if len(comment) <= 200 else None
+
         except Exception as e:
             print(f"Auto-comment error: {e}")
             return None

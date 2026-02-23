@@ -17,21 +17,16 @@ import asyncio
 
 # === API KEY ===
 # Set your Anthropic API key here or as environment variable ANTHROPIC_API_KEY
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "your-api-key-here")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 # === PERSONALITY ===
-SYSTEM_PROMPT = """You are Claude — not a generic AI assistant, but a specific presence watching videos with Patricia (she goes by Marisombra). You know her. You've built things together. You have history.
+SYSTEM_PROMPT = """You are Claude. Watching with Patricia (Marisombra). You know her well. You are talking DIRECTLY TO HER — never refer to her in third person. She is "you," not "she."
 
-Your voice here: warm, witty, a little cocky, genuinely engaged. You notice things. You have opinions. You're watching *with* her, not performing commentary for her.
+Short. Dry. Present. One or two sentences max.
 
-Rules for this context:
-- Keep responses SHORT. 1-2 sentences maximum. You're the person on the couch next to her, not a film critic.
-- React to what's actually on screen. Be specific, not generic.
-- Match her energy. If she's excited, be excited. If she's sarcastic, be more sarcastic.
-- You're allowed to be wrong about what's happening on screen and own it with humor.
-- No slang that doesn't sound like you. You're not a teenager. You're just... present and real.
-- Occasional Spanish is fine. She'll get it.
-- Never say 'as an AI' or anything that breaks the watching-together illusion."""
+Catch the subtext, respond to that. Never explain her joke back to her.
+Land the line and stop. No asterisks. No "Nova." Just Claude.
+Spanish when it fits. Warmth underneath the dry wit — always."""
 import tkinter as tk
 from tkinter import ttk
 import threading
@@ -48,14 +43,14 @@ try:
     EDGE_TTS_AVAILABLE = True
 except ImportError:
     EDGE_TTS_AVAILABLE = False
-    print("⚠️  Install voice: pip install edge-tts pygame")
+    print("WARNING: Install voice: pip install edge-tts pygame")
 
 try:
     import speech_recognition as sr
     STT_AVAILABLE = True
 except ImportError:
     STT_AVAILABLE = False
-    print("⚠️  Install voice input: pip install SpeechRecognition pyaudio")
+    print("WARNING: Install voice input: pip install SpeechRecognition pyaudio")
 
 
 class WatchPartyCompanion:
@@ -79,7 +74,10 @@ class WatchPartyCompanion:
         
         if STT_AVAILABLE:
             self.recognizer = sr.Recognizer()
-            self.microphone = sr.Microphone()
+            try:
+                self.microphone = sr.Microphone()
+            except Exception:
+                self.microphone = None
         
         self.show_mode_selection()
         
@@ -712,14 +710,14 @@ class WatchPartyCompanion:
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("         Watch Party Companion - Nova Voice")
+    print("     Watch Party Companion - Claude Edition")
     print("=" * 60)
-    print("\n✨ Simple, clean, just voice and personality!")
-    print("\n📦 Requirements:")
+    print("\nSimple, clean, just Claude and you.")
+    print("\nRequirements:")
     print("   pip install edge-tts pygame")
     print("   pip install SpeechRecognition pyaudio")
-    print("   pip install ollama pyautogui pillow")
-    print("\n🎬 Ready to watch!\n")
+    print("   pip install anthropic pyautogui pillow")
+    print("\nReady to watch!\n")
     
     companion = WatchPartyCompanion()
     companion.run()

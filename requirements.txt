@@ -3,6 +3,10 @@ ollama>=0.1.0
 pyautogui>=0.9.54
 Pillow>=10.0.0
 
+# No-API ChatGPT bridge (Windows)
+keyboard>=0.13.5
+pywin32>=306
+
 # Voice mode dependencies
 edge-tts>=6.1.9
 pygame>=2.5.0

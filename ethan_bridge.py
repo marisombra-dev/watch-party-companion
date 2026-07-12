@@ -31,6 +31,9 @@ from PIL import ImageGrab
 
 try:
     import win32clipboard
+    import win32event
+    import win32api
+    import winerror
 except ImportError as exc:  # pragma: no cover - platform/dependency guard
     raise SystemExit(
         "pywin32 is required on Windows. Install bridge dependencies with: "
@@ -56,6 +59,8 @@ class EthanBridge:
     def __init__(self, config: BridgeConfig | None = None) -> None:
         self.config = config or BridgeConfig()
         self._busy = threading.Lock()
+        self._paused = False
+        self._capture_hotkey_handle = None
         self.capture_dir = Path(__file__).with_name("bridge_captures")
         if self.config.save_captures:
             self.capture_dir.mkdir(exist_ok=True)
@@ -105,6 +110,30 @@ class EthanBridge:
         finally:
             win32clipboard.CloseClipboard()
 
+
+    def _register_capture_hotkey(self) -> None:
+        if self._capture_hotkey_handle is None:
+            self._capture_hotkey_handle = keyboard.add_hotkey(
+                self.config.hotkey,
+                lambda: threading.Thread(target=self.send_glance, daemon=True).start(),
+                suppress=True,
+                trigger_on_release=True,
+            )
+
+    def _unregister_capture_hotkey(self) -> None:
+        if self._capture_hotkey_handle is not None:
+            keyboard.remove_hotkey(self._capture_hotkey_handle)
+            self._capture_hotkey_handle = None
+
+    def toggle_pause(self) -> None:
+        self._paused = not self._paused
+        if self._paused:
+            self._unregister_capture_hotkey()
+            print("Bridge paused. F8 is available to other apps.")
+        else:
+            self._register_capture_hotkey()
+            print("Bridge resumed. F8 sends a shared glance.")
+
     def send_glance(self) -> None:
         """Capture, paste, compose, and submit one watch-party glance."""
         if not self._busy.acquire(blocking=False):
@@ -146,18 +175,25 @@ class EthanBridge:
         print("Video on the left. ChatGPT on the right.")
         print("Hover over the ChatGPT message box and press F8.")
         print("F8 captures, pastes, and sends automatically.")
-        print("Press Ctrl+Shift+Q to quit.")
+        print("Ctrl+Shift+F8 pauses/resumes the bridge.")
+        print("Ctrl+Shift+Q quits the bridge.")
         print()
 
-        keyboard.add_hotkey(
-            self.config.hotkey,
-            lambda: threading.Thread(target=self.send_glance, daemon=True).start(),
-            suppress=True,
-            trigger_on_release=True,
-        )
+        self._register_capture_hotkey()
+        keyboard.add_hotkey("ctrl+shift+f8", self.toggle_pause, suppress=True)
         keyboard.wait("ctrl+shift+q")
 
 
+def acquire_single_instance():
+    mutex = win32event.CreateMutex(None, False, "EthanWatchPartyBridgeSingleton")
+    if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
+        print("Ethan Watch-Party Bridge is already running.")
+        return None
+    return mutex
+
+
 if __name__ == "__main__":
-    EthanBridge().run()
+    _mutex = acquire_single_instance()
+    if _mutex is not None:
+        EthanBridge().run()
 

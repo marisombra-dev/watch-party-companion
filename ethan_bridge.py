@@ -17,6 +17,7 @@ Windows-first because copying images to the clipboard is handled with pywin32.
 from __future__ import annotations
 
 import io
+import struct
 import sys
 import threading
 import time
@@ -71,11 +72,11 @@ class EthanBridge:
 
         image = ImageGrab.grab(bbox=bbox, all_screens=False)
 
-        if self.config.save_captures:
-            stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            image.save(self.capture_dir / f"watch_{stamp}.png")
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        capture_path = self.capture_dir / f"watch_{stamp}.png"
+        image.save(capture_path)
 
-        return image
+        return image, capture_path
 
     @staticmethod
     def copy_image_to_clipboard(image) -> None:
@@ -91,6 +92,19 @@ class EthanBridge:
         finally:
             win32clipboard.CloseClipboard()
 
+    @staticmethod
+    def copy_file_to_clipboard(path: Path) -> None:
+        """Copy a real PNG file to the clipboard as a Windows file drop."""
+        dropfiles = struct.pack("IiiII", 20, 0, 0, 0, 1)
+        file_list = (str(path.resolve()) + "\0\0").encode("utf-16le")
+
+        win32clipboard.OpenClipboard()
+        try:
+            win32clipboard.EmptyClipboard()
+            win32clipboard.SetClipboardData(15, dropfiles + file_list)
+        finally:
+            win32clipboard.CloseClipboard()
+
     def send_glance(self) -> None:
         """Capture, paste, compose, and submit one watch-party glance."""
         if not self._busy.acquire(blocking=False):
@@ -99,17 +113,16 @@ class EthanBridge:
 
         try:
             print("Capturing and sending the video side...")
-            image = self.capture_video_region()
+            image, capture_path = self.capture_video_region()
 
-            # Focus ChatGPT first, then put the image on the clipboard immediately
-            # before pasting so Chrome cannot receive stale clipboard contents.
+            # Focus ChatGPT, then paste the saved PNG as a real file attachment.
             pyautogui.click()
             time.sleep(0.25)
-            self.copy_image_to_clipboard(image)
+            self.copy_file_to_clipboard(capture_path)
             time.sleep(0.25)
             pyautogui.hotkey("ctrl", "v")
 
-            # Give ChatGPT time to create the image attachment before typing.
+            # Give ChatGPT time to upload the file before typing the prompt.
             time.sleep(4.0)
             pyautogui.hotkey("shift", "enter")
             pyautogui.write(

@@ -100,14 +100,17 @@ class EthanBridge:
         try:
             print("Capturing and sending the video side...")
             image = self.capture_video_region()
-            self.copy_image_to_clipboard(image)
 
-            # Hover over the ChatGPT composer before pressing F8.
+            # Focus ChatGPT first, then put the image on the clipboard immediately
+            # before pasting so Chrome cannot receive stale clipboard contents.
             pyautogui.click()
-            time.sleep(self.config.paste_delay_seconds)
+            time.sleep(0.25)
+            self.copy_image_to_clipboard(image)
+            time.sleep(0.25)
             pyautogui.hotkey("ctrl", "v")
-            time.sleep(self.config.paste_delay_seconds)
 
+            # Give ChatGPT time to create the image attachment before typing.
+            time.sleep(4.0)
             pyautogui.hotkey("shift", "enter")
             pyautogui.write(
                 DEFAULT_PROMPT,
@@ -115,11 +118,8 @@ class EthanBridge:
             )
 
             if self.config.auto_submit:
-                # ChatGPT may ignore Enter while the image is still attaching.
-                # Retry a few times; extra presses are harmless once sending begins.
-                for _ in range(3):
-                    time.sleep(1.5)
-                    pyautogui.press("enter")
+                time.sleep(1.5)
+                pyautogui.press("enter")
                 print("Sent to ChatGPT.")
         except Exception as exc:
             print(f"Bridge error: {exc}", file=sys.stderr)

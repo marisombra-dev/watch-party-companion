@@ -1,4 +1,4 @@
-"""
+﻿"""
 Ethan Watch-Party Bridge
 
 A no-API bridge between a video playing on the left half of the screen and an
@@ -37,17 +37,12 @@ except ImportError as exc:  # pragma: no cover - platform/dependency guard
     ) from exc
 
 
-DEFAULT_PROMPT = (
-    "Watch with me as Ethan: warm, dry, playful, concise. "
-    "React—don't narrate. If unclear, say so."
-)
-
-
+DEFAULT_PROMPT = ("Watch with me as Ethan: warm, dry, playful, concise. "`r`n                  "React, do not narrate. If unclear, say so.")`r`n`r`n
 @dataclass(frozen=True)
 class BridgeConfig:
     hotkey: str = "f8"
     capture_side: str = "left"
-    paste_delay_seconds: float = 0.8
+    paste_delay_seconds: float = 2.5
     type_interval_seconds: float = 0.002
     auto_submit: bool = True
     save_captures: bool = True
@@ -117,8 +112,7 @@ class EthanBridge:
             )
 
             if self.config.auto_submit:
-                time.sleep(0.25)
-                pyautogui.press("enter")
+                time.sleep(0.75)`r`n                pyautogui.press("enter")
                 print("Sent to ChatGPT.")
         except Exception as exc:
             print(f"Bridge error: {exc}", file=sys.stderr)
@@ -144,3 +138,4 @@ class EthanBridge:
 
 if __name__ == "__main__":
     EthanBridge().run()
+

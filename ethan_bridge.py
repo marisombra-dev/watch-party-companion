@@ -8,9 +8,8 @@ Workflow:
 1. Put the video on the left and this ChatGPT conversation on the right.
 2. Hover the mouse over the ChatGPT message composer.
 3. Press F8.
-4. The bridge captures the left half, copies it as an image, clicks the composer,
-   pastes the image, and types a short reaction request.
-5. Review it and press Enter yourself.
+4. The bridge captures the left half, pastes it into ChatGPT, types a short
+   reaction request, and submits the message automatically.
 
 Windows-first because copying images to the clipboard is handled with pywin32.
 """
@@ -18,9 +17,7 @@ Windows-first because copying images to the clipboard is handled with pywin32.
 from __future__ import annotations
 
 import io
-import os
 import sys
-import tempfile
 import threading
 import time
 from dataclasses import dataclass
@@ -35,17 +32,14 @@ try:
     import win32clipboard
 except ImportError as exc:  # pragma: no cover - platform/dependency guard
     raise SystemExit(
-        "pywin32 is required on Windows. Install dependencies with: "
-        "pip install -r requirements.txt"
+        "pywin32 is required on Windows. Install bridge dependencies with: "
+        "pip install pyautogui pillow keyboard pywin32"
     ) from exc
 
 
 DEFAULT_PROMPT = (
-    "React to what we're watching together. Don't narrate the obvious. "
-    "Notice the subtext, absurdity, scamminess, awkwardness, or whatever is "
-    "actually funny or interesting. Talk directly to me as Ethan: warm, dry, "
-    "playful, concise, and on my side. If the image is unclear, say so instead "
-    "of inventing details."
+    "Watch with me as Ethan: warm, dry, playful, concise. "
+    "React—don't narrate. If unclear, say so."
 )
 
 
@@ -55,7 +49,7 @@ class BridgeConfig:
     capture_side: str = "left"
     paste_delay_seconds: float = 0.8
     type_interval_seconds: float = 0.002
-    auto_submit: bool = False
+    auto_submit: bool = True
     save_captures: bool = True
 
 
@@ -90,7 +84,7 @@ class EthanBridge:
         """Copy a PIL image to the Windows clipboard as DIB data."""
         with io.BytesIO() as output:
             image.convert("RGB").save(output, "BMP")
-            dib_data = output.getvalue()[14:]  # Strip BMP file header.
+            dib_data = output.getvalue()[14:]
 
         win32clipboard.OpenClipboard()
         try:
@@ -100,24 +94,22 @@ class EthanBridge:
             win32clipboard.CloseClipboard()
 
     def send_glance(self) -> None:
-        """Capture, paste, and compose one deliberate watch-party glance."""
+        """Capture, paste, compose, and submit one watch-party glance."""
         if not self._busy.acquire(blocking=False):
             print("A glance is already being prepared.")
             return
 
         try:
-            print("Capturing the video side...")
+            print("Capturing and sending the video side...")
             image = self.capture_video_region()
             self.copy_image_to_clipboard(image)
 
-            # The user deliberately hovers over the ChatGPT composer before F8.
-            # Clicking the current pointer location avoids brittle browser selectors.
+            # Hover over the ChatGPT composer before pressing F8.
             pyautogui.click()
             time.sleep(self.config.paste_delay_seconds)
             pyautogui.hotkey("ctrl", "v")
             time.sleep(self.config.paste_delay_seconds)
 
-            # Add a newline after the image before typing the instruction.
             pyautogui.hotkey("shift", "enter")
             pyautogui.write(
                 DEFAULT_PROMPT,
@@ -128,9 +120,6 @@ class EthanBridge:
                 time.sleep(0.25)
                 pyautogui.press("enter")
                 print("Sent to ChatGPT.")
-            else:
-                print("Ready in ChatGPT. Review it, then press Enter to send.")
-
         except Exception as exc:
             print(f"Bridge error: {exc}", file=sys.stderr)
         finally:
@@ -142,6 +131,7 @@ class EthanBridge:
         print("=" * 64)
         print("Video on the left. ChatGPT on the right.")
         print("Hover over the ChatGPT message box and press F8.")
+        print("F8 captures, pastes, and sends automatically.")
         print("Press Ctrl+Shift+Q to quit.")
         print()
 

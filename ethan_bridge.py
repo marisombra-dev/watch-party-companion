@@ -136,6 +136,8 @@ class EthanBridge:
         keyboard.add_hotkey(
             self.config.hotkey,
             lambda: threading.Thread(target=self.send_glance, daemon=True).start(),
+            suppress=True,
+            trigger_on_release=True,
         )
         keyboard.wait("ctrl+shift+q")
 

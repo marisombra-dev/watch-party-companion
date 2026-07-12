@@ -115,8 +115,11 @@ class EthanBridge:
             )
 
             if self.config.auto_submit:
-                time.sleep(0.75)
-                pyautogui.press("enter")
+                # ChatGPT may ignore Enter while the image is still attaching.
+                # Retry a few times; extra presses are harmless once sending begins.
+                for _ in range(3):
+                    time.sleep(1.5)
+                    pyautogui.press("enter")
                 print("Sent to ChatGPT.")
         except Exception as exc:
             print(f"Bridge error: {exc}", file=sys.stderr)
